@@ -1,12 +1,14 @@
+import PinataSDK from '@pinata/sdk';
 import 'dotenv/config';
-import pinataSDK from '@pinata/sdk';
 import fs from 'fs';
 
-const pinata = new pinataSDK({ 
-    pinataApiKey: process.env.PINATA_API_KEY, 
-    pinataSecretApiKey: process.env.PINATA_SECRET_KEY 
-});
+// Pinata SDK
+const pinata = new PinataSDK(
+    process.env.PINATA_API_KEY || '',
+    process.env.PINATA_SECRET_KEY || ''
+);
 
+// Upload file to IPFS
 const uploadFile = async (filePath: string) => {
     try {
         const result = await pinata.pinFromFS(filePath);
@@ -18,9 +20,9 @@ const uploadFile = async (filePath: string) => {
     }
 };
 
+// Retrieve file from IPFS
 const retrieveFile = async (cid: string) => {
     try {
-        // Pinata Gateway URL
         const url = `https://gateway.pinata.cloud/ipfs/${cid}`;
         const response = await fetch(url);
         const data = await response.text();
@@ -32,6 +34,7 @@ const retrieveFile = async (cid: string) => {
     }
 };
 
+// Main
 (async () => {
     try {
         const filePath = './uploadme.txt';
